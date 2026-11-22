@@ -247,6 +247,24 @@ describe('course and learning', () => {
     expect(screen.getByRole('heading', { name: 'Урок доступен после записи' })).toBeInTheDocument();
   });
 
+  it('lets a student edit their review instead of writing a new one', async () => {
+    const { user } = renderApp('/course/k-math', { userId: DEMO_STUDENT_ID });
+    await user.click(screen.getByRole('button', { name: /отзыв$/ }));
+    const dialog = screen.getByRole('dialog');
+    await user.clear(within(dialog).getByRole('textbox'));
+    await user.type(within(dialog).getByRole('textbox'), 'Понятные объяснения');
+    await user.click(within(dialog).getByRole('button', { name: /Отправить|Сохранить/ }));
+
+    await user.click(screen.getByRole('button', { name: 'Изменить отзыв' }));
+    const edit = screen.getByRole('dialog', { name: 'Изменить отзыв' });
+    expect(within(edit).getByRole('textbox')).toHaveValue('Понятные объяснения');
+    await user.click(within(edit).getByRole('button', { name: 'Сохранить' }));
+    const mine = values(useAppStore.getState().db.reviews).filter(
+      (review) => review.userId === DEMO_STUDENT_ID && review.courseId === 'k-math',
+    );
+    expect(mine).toHaveLength(1);
+  });
+
   it('marks lessons as completed and passes a module test', async () => {
     const { user } = renderApp('/learn/k-math/k-math-l4', { userId: DEMO_STUDENT_ID });
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
@@ -262,6 +280,7 @@ describe('course and learning', () => {
     const nav = screen.getAllByRole('navigation', { name: 'Содержание курса' })[0]!;
     await user.click(within(nav).getAllByRole('button', { name: /Тест модуля/ })[1]!);
     const quiz = useAppStore.getState().db.quizzes['k-math-q2']!;
+    expect(screen.getByRole('button', { name: 'Проверить ответы' })).toBeDisabled();
     for (const [index, question] of quiz.questions.entries()) {
       const fieldset = screen.getByRole('group', { name: `Вопрос ${index + 1}` });
       await user.click(

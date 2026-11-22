@@ -69,6 +69,7 @@ export function CoursePage() {
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     [db.reviews, id],
   );
+  const myReview = user ? (reviews.find((review) => review.userId === user.id) ?? null) : null;
   const students = useMemo(
     () => values(db.enrollments).filter((item) => item.courseId === id).length,
     [db.enrollments, id],
@@ -287,7 +288,7 @@ export function CoursePage() {
               <h2 className="font-display text-lg">Отзывы</h2>
               {enrolled && (
                 <Button variant="soft" size="sm" onClick={() => setReviewOpen(true)}>
-                  Оставить отзыв
+                  {myReview ? 'Изменить отзыв' : 'Оставить отзыв'}
                 </Button>
               )}
             </div>
@@ -340,7 +341,7 @@ export function CoursePage() {
               )}
             </div>
             {promo && (
-              <p className="mt-1.5 inline-flex items-center gap-1 text-[12.5px] font-medium text-emerald-600 dark:text-emerald-400">
+              <p className="mt-1.5 inline-flex items-center gap-1 text-[12.5px] font-medium text-emerald-700 dark:text-emerald-400">
                 <Tag size={13} aria-hidden /> Промокод «{promo.code}» · −{promo.percent}%
               </p>
             )}
@@ -415,7 +416,7 @@ export function CoursePage() {
                   </Button>
                 </div>
                 {promoError && (
-                  <p role="alert" className="mt-1.5 text-[12px] text-red-500">
+                  <p role="alert" className="mt-1.5 text-[12px] text-red-600">
                     {promoError}
                   </p>
                 )}
@@ -456,7 +457,12 @@ export function CoursePage() {
           setMessage('Оплата прошла — курс открыт. Приятной учёбы!');
         }}
       />
-      <ReviewDialog courseId={course.id} open={reviewOpen} onClose={() => setReviewOpen(false)} />
+      <ReviewDialog
+        courseId={course.id}
+        existing={myReview}
+        open={reviewOpen}
+        onClose={() => setReviewOpen(false)}
+      />
     </div>
   );
 }
