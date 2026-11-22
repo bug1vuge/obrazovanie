@@ -69,7 +69,7 @@ export function MyLearning({ user }: { user: User }) {
             action={<Button onClick={() => navigate('/')}>Открыть каталог</Button>}
           />
         ) : (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
             {list.map((item) => {
               const tone = getTone(item.course?.tone);
               const courseId = item.enrollment.courseId;
@@ -96,7 +96,7 @@ export function MyLearning({ user }: { user: User }) {
                           {item.percent}%
                         </span>
                       </div>
-                      <div className="mt-3 flex items-center justify-between gap-2">
+                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
                         <span className="muted flex items-center gap-1 text-[11.5px]">
                           <Clock size={12} aria-hidden /> {item.completed}/{item.total} уроков
                         </span>

@@ -163,7 +163,7 @@ export function AdminPage() {
           Все курсы
         </h2>
         <div className="card overflow-hidden">
-          <div className="hairline-b muted hidden grid-cols-[1fr_160px_130px_150px] gap-2 px-4 py-2 text-[11.5px] font-semibold uppercase tracking-wide md:grid">
+          <div className="hairline-b muted hidden grid-cols-[1fr_160px_130px_150px] gap-2 px-4 py-2 text-[11.5px] font-semibold uppercase tracking-wide xl:grid">
             <span>Курс</span>
             <span>Автор</span>
             <span>Статус</span>
@@ -173,7 +173,7 @@ export function AdminPage() {
             {courses.map((course) => (
               <li
                 key={course.id}
-                className="grid grid-cols-1 gap-2 px-4 py-3 md:grid-cols-[1fr_160px_130px_150px] md:items-center"
+                className="grid grid-cols-1 gap-x-2 gap-y-2 px-4 py-3 xl:grid-cols-[1fr_160px_130px_150px] xl:items-center"
               >
                 <div className="min-w-0">
                   <p className="truncate text-[13.5px] font-medium">{course.title}</p>
@@ -182,38 +182,40 @@ export function AdminPage() {
                     {formatPrice(course.price)}
                   </p>
                 </div>
-                <span className="muted truncate text-[12.5px]">{course.teacherName || '—'}</span>
-                <span>
-                  <Badge tone={STATUS_TONES[course.status]}>{STATUS_LABELS[course.status]}</Badge>
-                </span>
-                <div className="flex items-center gap-1.5 md:justify-end">
-                  {course.status !== 'published' ? (
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 xl:contents">
+                  <span className="muted truncate text-[12.5px]">{course.teacherName || '—'}</span>
+                  <span>
+                    <Badge tone={STATUS_TONES[course.status]}>{STATUS_LABELS[course.status]}</Badge>
+                  </span>
+                  <div className="ml-auto flex items-center gap-1.5 xl:ml-0 xl:justify-end">
+                    {course.status !== 'published' ? (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => changeStatus(course, 'published')}
+                        aria-label={`Опубликовать «${course.title}»`}
+                      >
+                        <Check size={15} className="text-emerald-500" />
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => changeStatus(course, 'draft')}
+                        aria-label={`Снять с публикации «${course.title}»`}
+                      >
+                        <X size={15} />
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="ghost"
-                      onClick={() => changeStatus(course, 'published')}
-                      aria-label={`Опубликовать «${course.title}»`}
+                      onClick={() => setToDelete(course)}
+                      aria-label={`Удалить «${course.title}»`}
                     >
-                      <Check size={15} className="text-emerald-500" />
+                      <Trash2 size={15} className="text-red-500" />
                     </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => changeStatus(course, 'draft')}
-                      aria-label={`Снять с публикации «${course.title}»`}
-                    >
-                      <X size={15} />
-                    </Button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setToDelete(course)}
-                    aria-label={`Удалить «${course.title}»`}
-                  >
-                    <Trash2 size={15} className="text-red-500" />
-                  </Button>
+                  </div>
                 </div>
               </li>
             ))}

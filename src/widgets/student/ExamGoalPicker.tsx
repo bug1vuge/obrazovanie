@@ -168,7 +168,7 @@ export function ExamGoalPicker({ user }: { user: User }) {
           <div
             role="radiogroup"
             aria-label="Курс"
-            className="mt-3 grid grid-cols-1 gap-2 md:max-h-[420px] md:grid-cols-2 md:overflow-y-auto md:overscroll-contain md:pr-1"
+            className="mt-3 grid grid-cols-1 gap-2 md:max-h-[420px] md:overflow-y-auto md:overscroll-contain md:pr-1 lg:grid-cols-2"
           >
             {courses.map((course) => (
               <CourseOption
