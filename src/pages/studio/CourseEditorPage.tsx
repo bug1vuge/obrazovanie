@@ -244,7 +244,7 @@ export function CourseEditorPage() {
         >
           <ArrowLeft size={16} aria-hidden /> Студия
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge tone={STATUS_TONES[course.status]}>{STATUS_LABELS[course.status]}</Badge>
           <Button size="sm" variant="soft" onClick={() => navigate(`/course/${course.id}`)}>
             <Eye size={14} aria-hidden /> Просмотр
@@ -416,47 +416,52 @@ export function CourseEditorPage() {
                 </div>
                 <ul className="divide-y divide-[rgb(var(--line)/0.08)]">
                   {lessons.map((lesson, lessonIndex) => (
-                    <li key={lesson.id} className="flex items-center gap-2 px-3 py-2.5">
+                    <li
+                      key={lesson.id}
+                      className="flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-2.5"
+                    >
                       <span className="muted w-4 shrink-0 text-[11px]">{lessonIndex + 1}</span>
                       <button
                         type="button"
                         onClick={() => setLessonDraft(toDraft(lesson))}
-                        className="min-w-0 flex-1 truncate text-left text-[13.5px] hover:underline"
+                        className="min-w-0 flex-1 basis-[calc(100%-1.5rem)] truncate text-left text-[13.5px] hover:underline sm:basis-0"
                       >
                         {lesson.title}
                       </button>
-                      {lesson.isPreview && <Badge tone="ok">Пробный</Badge>}
-                      <span className="muted shrink-0 text-[11px]">
-                        {formatDuration(lesson.duration)}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => run(() => actions.moveLesson(lesson.id, -1))}
-                        disabled={lessonIndex === 0}
-                        className="hover-dim rounded p-1 disabled:opacity-30"
-                        aria-label="Переместить урок выше"
-                      >
-                        <ChevronUp size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => run(() => actions.moveLesson(lesson.id, 1))}
-                        disabled={lessonIndex === lessons.length - 1}
-                        className="hover-dim rounded p-1 disabled:opacity-30"
-                        aria-label="Переместить урок ниже"
-                      >
-                        <ChevronDown size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setPendingDelete({ kind: 'lesson', id: lesson.id, title: lesson.title })
-                        }
-                        className="hover-dim rounded p-1 text-red-500"
-                        aria-label="Удалить урок"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      <div className="ml-6 flex items-center gap-2 sm:ml-0">
+                        {lesson.isPreview && <Badge tone="ok">Пробный</Badge>}
+                        <span className="muted shrink-0 text-[11px]">
+                          {formatDuration(lesson.duration)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => run(() => actions.moveLesson(lesson.id, -1))}
+                          disabled={lessonIndex === 0}
+                          className="hover-dim rounded p-1 disabled:opacity-30"
+                          aria-label="Переместить урок выше"
+                        >
+                          <ChevronUp size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => run(() => actions.moveLesson(lesson.id, 1))}
+                          disabled={lessonIndex === lessons.length - 1}
+                          className="hover-dim rounded p-1 disabled:opacity-30"
+                          aria-label="Переместить урок ниже"
+                        >
+                          <ChevronDown size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPendingDelete({ kind: 'lesson', id: lesson.id, title: lesson.title })
+                          }
+                          className="hover-dim rounded p-1 text-red-500"
+                          aria-label="Удалить урок"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </li>
                   ))}
                   {lessons.length === 0 && (

@@ -89,7 +89,7 @@ export function TeacherStats({ user, now }: { user: User; now?: Date }) {
 
             <div className="card overflow-hidden">
               <h3 className="font-display px-4 pt-4 text-[14.5px] md:px-5">Последние продажи</h3>
-              <div className="overflow-x-auto">
+              <div className="hidden overflow-x-auto sm:block">
                 <table className="mt-2 w-full text-left text-[12.5px]">
                   <thead className="muted text-[11px] uppercase tracking-wide">
                     <tr className="hairline-b">
@@ -130,6 +130,21 @@ export function TeacherStats({ user, now }: { user: User; now?: Date }) {
                   </tbody>
                 </table>
               </div>
+              <ul className="mt-2 divide-y divide-[rgb(var(--line)/0.08)] sm:hidden">
+                {stats.recent.map((sale) => (
+                  <li key={sale.id} className="flex items-start justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0">
+                      <p className="truncate text-[13px] font-medium">{sale.userName}</p>
+                      <p className="muted truncate text-[11.5px]">{sale.courseTitle}</p>
+                      <p className="muted text-[11px]">{formatShortDate(sale.createdAt)}</p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-[13px] font-semibold">{formatMoney(sale.amount)}</p>
+                      {sale.promoCode && <p className="muted text-[10.5px]">{sale.promoCode}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </>
