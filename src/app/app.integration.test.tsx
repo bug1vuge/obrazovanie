@@ -106,6 +106,16 @@ describe('auth', () => {
   });
 });
 
+describe('profile settings', () => {
+  it('shows the stored name after saving an empty one', async () => {
+    const { user } = renderApp('/profile?tab=settings', { userId: DEMO_STUDENT_ID });
+    const name = screen.getByLabelText('Имя');
+    await user.clear(name);
+    await user.click(screen.getByRole('button', { name: /Сохранить/ }));
+    expect(name).toHaveValue('Алиса Смирнова');
+  });
+});
+
 describe('student cabinet', () => {
   it('asks to choose ОГЭ/ЕГЭ and a course, then shows the goal', async () => {
     const { user } = renderApp('/profile', { userId: DEMO_STUDENT_ID });
@@ -178,6 +188,24 @@ describe('teacher cabinet', () => {
 });
 
 describe('course and learning', () => {
+  it('keeps the visitor on the course after signing in from «Записаться»', async () => {
+    const { user, router } = renderApp('/course/sp-geo-students');
+    await user.click(screen.getByRole('button', { name: 'Записаться бесплатно' }));
+    const dialog = screen.getByRole('dialog', { name: 'Вход в Study Pro' });
+    await user.click(within(dialog).getByRole('button', { name: /Ученик/ }));
+    expect(router.state.location.pathname).toBe('/course/sp-geo-students');
+    await user.click(screen.getByRole('button', { name: 'Записаться бесплатно' }));
+    expect(screen.getByText('Вы записаны на курс. Приятной учёбы!')).toBeInTheDocument();
+  });
+
+  it('shows «Редактировать курс» instead of buying to the author', async () => {
+    const { user, router } = renderApp('/course/k-rus', { userId: DEMO_TEACHER_ID });
+    expect(screen.queryByRole('button', { name: 'Купить курс' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: 'Промокод' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Редактировать курс/ }));
+    expect(router.state.location.pathname).toBe('/studio/k-rus');
+  });
+
   it('enrolls into a free course', async () => {
     const { user } = renderApp('/course/sp-geo-students', { userId: DEMO_STUDENT_ID });
     await user.click(screen.getByRole('button', { name: 'Записаться бесплатно' }));

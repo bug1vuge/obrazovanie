@@ -5,6 +5,7 @@ import {
   Clock,
   FileText,
   Lock,
+  Pencil,
   Play,
   Tag,
   Users,
@@ -74,6 +75,8 @@ export function CoursePage() {
   );
 
   const enrolled = isEnrolled(db, user?.id, id);
+  // Authors (and the administrator) manage the course instead of buying it.
+  const isAuthor = canEditCourse(course, user);
   const canSee =
     course && (course.status === 'published' || enrolled || canEditCourse(course, user));
 
@@ -343,7 +346,21 @@ export function CoursePage() {
             )}
 
             <div className="mt-4 flex flex-col gap-2">
-              {enrolled ? (
+              {isAuthor ? (
+                <>
+                  <Button size="lg" onClick={() => navigate(`/studio/${course.id}`)}>
+                    <Pencil size={17} aria-hidden /> Редактировать курс
+                  </Button>
+                  {firstLesson && (
+                    <Button
+                      variant="outline"
+                      onClick={() => navigate(`/learn/${course.id}/${firstLesson.id}`)}
+                    >
+                      <Play size={16} aria-hidden /> Открыть уроки
+                    </Button>
+                  )}
+                </>
+              ) : enrolled ? (
                 <>
                   <Button
                     size="lg"
@@ -382,7 +399,7 @@ export function CoursePage() {
               )}
             </div>
 
-            {!enrolled && course.price > 0 && (
+            {!enrolled && !isAuthor && course.price > 0 && (
               <div className="mt-4">
                 <div className="flex gap-2">
                   <input

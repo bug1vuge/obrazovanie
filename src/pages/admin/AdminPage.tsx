@@ -123,7 +123,7 @@ export function AdminPage() {
                 className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center"
               >
                 <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl">
-                  <CourseCover course={course} />
+                  <CourseCover course={course} sizes="96px" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-display truncate text-[15px]">{course.title}</p>

@@ -5,7 +5,7 @@ import { useAuthDialog } from './authDialogStore';
 /** Returns a guard: `true` when signed in, otherwise opens the sign-in dialog. */
 export function useRequireAuth() {
   const user = useCurrentUser();
-  const open = useAuthDialog((state) => state.open);
+  const open = useAuthDialog((state) => state.openForAction);
   return useCallback(() => {
     if (user) return true;
     open();

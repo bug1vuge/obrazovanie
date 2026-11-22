@@ -29,7 +29,7 @@ const DEMO_ACCOUNTS = [
 ] as const;
 
 export function AuthDialog() {
-  const { isOpen, close } = useAuthDialog();
+  const { isOpen, close, stayOnPage } = useAuthDialog();
   const signIn = useAppStore((state) => state.signIn);
   const signInWithEmail = useAppStore((state) => state.signInWithEmail);
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export function AuthDialog() {
   const loginAs = (userId: string) => {
     signIn(userId);
     finish();
-    navigate(userId === DEMO_OWNER_ID ? '/admin' : '/profile');
+    if (!stayOnPage) navigate(userId === DEMO_OWNER_ID ? '/admin' : '/profile');
   };
 
   const onSubmit = (event: FormEvent) => {
@@ -55,7 +55,7 @@ export function AuthDialog() {
     try {
       signInWithEmail({ name, email });
       finish();
-      navigate('/profile');
+      if (!stayOnPage) navigate('/profile');
     } catch (err) {
       setError(errorMessage(err));
     }

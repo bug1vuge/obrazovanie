@@ -402,3 +402,11 @@
     animation: none;
   }
 }
+
+/* iOS Safari zooms into inputs with text smaller than 16px — keep fields at 16px on phones. */
+@media (max-width: 639px) {
+  input.inp,
+  textarea.inp {
+    font-size: 16px !important;
+  }
+}

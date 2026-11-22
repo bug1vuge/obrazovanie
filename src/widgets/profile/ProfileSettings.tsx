@@ -30,6 +30,13 @@ export function ProfileSettings({ user }: { user: User }) {
 
   const save = () => {
     updateProfile({ displayName: name, headline, bio });
+    // Show what was actually stored (an empty name keeps the previous one).
+    const saved = useAppStore.getState().db.users[user.id];
+    if (saved) {
+      setName(saved.displayName);
+      setHeadline(saved.headline);
+      setBio(saved.bio);
+    }
     setSaved(true);
     window.setTimeout(() => setSaved(false), 2500);
   };
