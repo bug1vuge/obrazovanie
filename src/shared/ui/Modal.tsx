@@ -35,10 +35,9 @@ export function Modal({
       if (event.key === 'Escape') onCloseRef.current();
     };
     window.addEventListener('keydown', onKey);
-    const focusTarget = panelRef.current?.querySelector<HTMLElement>(
-      '[autofocus], input, textarea, select',
-    );
-    (focusTarget ?? panelRef.current)?.focus();
+    // Respect an explicit autoFocus, otherwise focus the dialog itself so that
+    // the on-screen keyboard does not pop up on phones.
+    if (!panelRef.current?.contains(document.activeElement)) panelRef.current?.focus();
     return () => {
       window.removeEventListener('keydown', onKey);
       previouslyFocused?.focus?.();
