@@ -16,7 +16,7 @@ export function StatCard({
   return (
     <Reveal className="card p-4">
       <Icon size={15} className="muted" aria-hidden />
-      <p className="font-display mt-1.5 whitespace-nowrap text-[clamp(0.95rem,4.2vw,1.25rem)] leading-none">
+      <p className="font-display mt-1.5 whitespace-nowrap text-[clamp(0.85rem,3.8vw,1.25rem)] leading-none">
         {value}
       </p>
       <p className="muted mt-1 text-[11.5px]">{label}</p>

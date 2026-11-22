@@ -34,10 +34,10 @@ export function CourseCard({ course, metrics, stats }: CourseCardProps) {
           }}
         />
         <div className="relative z-10 flex items-start justify-between gap-2">
-          <span className="rounded-full bg-black/30 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-white backdrop-blur">
+          <span className="min-w-0 truncate rounded-full bg-black/30 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-white backdrop-blur">
             {course.category || 'Курс'}
           </span>
-          <span className="rounded-full bg-white/90 px-2.5 py-1 text-[11.5px] font-semibold text-black">
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-white/90 px-2.5 py-1 text-[11.5px] font-semibold text-black">
             {formatPrice(course.price)}
           </span>
         </div>

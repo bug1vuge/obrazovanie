@@ -551,7 +551,7 @@ export function CourseEditorPage() {
                 autoFocus
               />
             </Field>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 items-end gap-3">
               <Field label="Тип">
                 <Select<LessonType>
                   value={lessonDraft.type}

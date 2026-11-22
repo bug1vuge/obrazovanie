@@ -132,7 +132,7 @@ export function AdminPage() {
                     {metrics[course.id]?.lessonsCount ?? 0} уроков · {formatPrice(course.price)}
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button size="sm" onClick={() => changeStatus(course, 'published')}>
                     <Check size={14} aria-hidden /> Опубликовать
                   </Button>
@@ -231,7 +231,7 @@ export function AdminPage() {
         <div className="card p-4">
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
-              <span key={category.id} className="chip">
+              <span key={category.id} className="chip max-w-full !whitespace-normal">
                 {category.name}
                 <button
                   type="button"

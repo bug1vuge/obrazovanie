@@ -142,8 +142,8 @@ export function CoursePage() {
         <ArrowLeft size={16} aria-hidden /> Назад
       </button>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px] lg:gap-x-6">
-        <div className="min-w-0 lg:col-start-1">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_360px] xl:gap-x-6">
+        <div className="min-w-0 xl:col-start-1">
           <div className="rise relative overflow-hidden rounded-3xl">
             <CourseCover course={course} />
             <div
@@ -166,7 +166,7 @@ export function CoursePage() {
                   </span>
                 )}
               </div>
-              <h1 className="font-display text-[26px] leading-[1.12] text-white sm:text-[34px] md:text-[40px]">
+              <h1 className="font-display hyphens-auto break-words text-[26px] leading-[1.12] text-white sm:text-[34px] md:text-[40px]">
                 {course.title}
               </h1>
               <p className="max-w-2xl text-[14.5px] leading-relaxed text-white/85">
@@ -204,7 +204,7 @@ export function CoursePage() {
           </div>
         </div>
 
-        <div className="min-w-0 lg:col-start-1">
+        <div className="min-w-0 xl:col-start-1">
           <Reveal as="section" className="card p-5 md:p-6">
             <h2 className="font-display text-lg">О курсе</h2>
             <p className="mt-2.5 whitespace-pre-line text-[14.5px] leading-relaxed">
@@ -328,7 +328,7 @@ export function CoursePage() {
           </Reveal>
         </div>
 
-        <aside className="lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
+        <aside className="xl:sticky xl:top-6 xl:col-start-2 xl:row-span-2 xl:row-start-1 xl:self-start">
           <div className="card p-5">
             <div className="flex items-end gap-2">
               <span className="font-display text-[30px] leading-none">{formatPrice(price)}</span>
