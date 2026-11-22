@@ -78,7 +78,8 @@ export function ProfilePage() {
   const tabs = tabsFor(user);
   const requested = params.get('tab') as ProfileTab | null;
   const tab = tabs.some((item) => item.id === requested) ? (requested as ProfileTab) : tabs[0]!.id;
-  const selectTab = (next: ProfileTab) => setParams({ tab: next }, { replace: true });
+  const selectTab = (next: ProfileTab) =>
+    setParams({ tab: next }, { replace: true, preventScrollReset: true });
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 pb-24 pt-6 md:px-8 md:pb-10 md:pt-10">

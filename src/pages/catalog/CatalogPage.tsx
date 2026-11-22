@@ -33,7 +33,8 @@ export function CatalogPage() {
   const stats = useCourseStats();
   const [params, setParams] = useSearchParams();
   const filters = useMemo(() => filtersFromParams(params), [params]);
-  const setFilters = (next: CatalogFilters) => setParams(filtersToParams(next), { replace: true });
+  const setFilters = (next: CatalogFilters) =>
+    setParams(filtersToParams(next), { replace: true, preventScrollReset: true });
   const [showFilters, setShowFilters] = useState(false);
 
   const published = useMemo(
