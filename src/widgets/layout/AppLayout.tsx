@@ -1,6 +1,5 @@
 import { LogIn, Moon, Sun } from 'lucide-react';
-import { useEffect, useRef } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, NavLink, Outlet } from 'react-router-dom';
 import { ROLE_LABELS } from '@/entities/user/lib';
 import { useAuthDialog } from '@/features/auth/authDialogStore';
 import { cn } from '@/shared/lib/cn';
@@ -32,25 +31,14 @@ function ThemeToggle({ withLabel = false }: { withLabel?: boolean }) {
   );
 }
 
-/** Resets scroll of the main column on navigation. */
-function useScrollReset() {
-  const ref = useRef<HTMLElement>(null);
-  const { pathname } = useLocation();
-  useEffect(() => {
-    ref.current?.scrollTo?.({ top: 0 });
-  }, [pathname]);
-  return ref;
-}
-
 export function AppLayout() {
   const user = useCurrentUser();
   const openAuth = useAuthDialog((state) => state.open);
-  const mainRef = useScrollReset();
   const sideItems = user?.isOwner ? [...NAV_ITEMS, ADMIN_ITEM] : NAV_ITEMS;
 
   return (
-    <div className="flex h-full">
-      <aside className="hairline-r hidden shrink-0 flex-col gap-6 px-4 py-5 md:flex md:w-60 lg:w-64">
+    <div className="flex min-h-dvh">
+      <aside className="hairline-r sticky top-0 hidden h-dvh shrink-0 flex-col gap-6 overflow-y-auto px-4 py-5 md:flex md:w-60 lg:w-64">
         <Logo />
         <nav aria-label="Основная навигация" className="flex flex-col gap-1">
           {sideItems.map(({ to, label, icon: Icon, end }) => (
@@ -92,7 +80,7 @@ export function AppLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="hairline-b flex shrink-0 items-center justify-between px-4 pb-3 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] md:hidden">
+        <header className="app-header hairline-b sticky top-0 z-30 flex shrink-0 items-center justify-between px-4 pb-3 pt-[calc(env(safe-area-inset-top,0px)+0.75rem)] md:hidden">
           <Logo />
           <div className="flex items-center gap-1">
             <ThemeToggle />
@@ -108,14 +96,14 @@ export function AppLayout() {
           </div>
         </header>
 
-        <main ref={mainRef} className="min-h-0 flex-1 overflow-y-auto">
+        <main id="main" className="min-w-0 flex-1">
           <Outlet />
-          <div className="h-24 md:h-6" />
+          <div className="h-[calc(5rem+env(safe-area-inset-bottom,0px))] md:h-6" />
         </main>
 
         <nav
           aria-label="Нижняя навигация"
-          className="hairline-t fixed bottom-0 left-0 right-0 z-20 flex bg-[rgb(var(--surface))] pb-[env(safe-area-inset-bottom,0px)] md:hidden"
+          className="app-header hairline-t fixed bottom-0 left-0 right-0 z-30 flex pb-[env(safe-area-inset-bottom,0px)] md:hidden"
         >
           {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
             <NavLink

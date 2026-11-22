@@ -30,21 +30,32 @@
     color-scheme: dark;
   }
 
-  html,
-  body,
-  #root {
-    height: 100%;
-  }
-
   html {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    /* Reserve the scrollbar space so locking scroll never shifts the layout. */
+    scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Set while a dialog or drawer is open (see shared/lib/scrollLock). */
+  html.scroll-locked {
+    overflow: hidden;
+  }
+  html.scroll-locked body {
+    overscroll-behavior: none;
+  }
+
+  #root {
+    min-height: 100dvh;
+    /* clip (unlike hidden) does not create a scroll container, so sticky keeps working */
+    overflow-x: clip;
   }
 
   body {
     margin: 0;
-    overflow: hidden;
-    overscroll-behavior: none;
+    min-height: 100dvh;
     background-color: rgb(var(--color-bg));
     background-image:
       radial-gradient(110% 70% at 100% 0%, rgb(var(--color-secondary) / 0.07), transparent 62%),
@@ -154,6 +165,105 @@
     color: rgb(var(--muted));
   }
 
+  /* Translucent background for the sticky header and the bottom navigation. */
+  .app-header {
+    background-color: rgb(var(--color-bg) / 0.86);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    backdrop-filter: saturate(160%) blur(14px);
+  }
+
+  /* Native inputs in the site style. */
+  .inp[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .inp[type='number']::-webkit-outer-spin-button,
+  .inp[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .inp[type='search']::-webkit-search-cancel-button,
+  .inp[type='search']::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  .inp[type='date'],
+  .inp[type='time'],
+  .inp[type='datetime-local'] {
+    min-height: 2.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .inp::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.55;
+    border-radius: 6px;
+    padding: 2px;
+    transition: opacity 0.15s;
+  }
+  .inp::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+  html.dark .inp::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+  textarea.inp {
+    resize: vertical;
+    min-height: 2.75rem;
+  }
+  select.inp {
+    appearance: none;
+    padding-right: 2.4rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23746d66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+  }
+
+  .checkbox {
+    appearance: none;
+    flex-shrink: 0;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 0.4rem;
+    border: 1.5px solid rgb(var(--line) / 0.3);
+    background-color: rgb(var(--surface));
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 0.8rem;
+    cursor: pointer;
+    transition:
+      background-color 0.15s,
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+  .checkbox:hover {
+    border-color: rgb(var(--color-primary) / 0.6);
+  }
+  .checkbox:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(var(--color-primary) / 0.2);
+  }
+  .checkbox:checked {
+    border-color: rgb(var(--color-primary));
+    background-color: rgb(var(--color-primary));
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
+  html.dark .checkbox:checked {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e0c14' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  }
+
+  /* Entrance animation on scroll (see shared/ui/Reveal). */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
   .chip {
     display: inline-flex;
     align-items: center;
@@ -196,6 +306,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
   .rise,
   .card-lift,
   .card-lift:hover {
@@ -211,8 +326,9 @@
     size: A4 landscape;
     margin: 0;
   }
+  html,
   body {
-    overflow: visible;
+    overflow: visible !important;
     background: #fff;
   }
   body * {
@@ -222,9 +338,67 @@
   .print-area * {
     visibility: visible;
   }
+  .scale-to-fit-inner {
+    transform: none !important;
+  }
   .print-area {
     position: fixed;
     inset: 0;
     margin: 0 auto;
+  }
+}
+
+/* Dialog entrance: slide up on phones, fade + scale on larger screens. */
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+.modal-backdrop {
+  animation: backdrop-in 0.2s ease-out both;
+}
+.modal-panel {
+  animation: sheet-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.drawer-panel {
+  animation: drawer-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.popover {
+  animation: pop-in 0.14s ease-out both;
+}
+@media (min-width: 640px) {
+  .modal-panel {
+    animation-name: dialog-in;
+    animation-duration: 0.22s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-panel,
+  .drawer-panel,
+  .popover {
+    animation: none;
   }
 }

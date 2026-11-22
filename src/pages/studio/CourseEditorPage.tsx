@@ -26,7 +26,7 @@ import type { Course, CourseExam, Lesson, LessonType, QuizQuestion } from '@/ent
 import { cn } from '@/shared/lib/cn';
 import { createId } from '@/shared/lib/id';
 import { formatDuration, pluralize, WORDS } from '@/shared/lib/format';
-import { Badge, Button, EmptyState, Field, Modal, Notice } from '@/shared/ui';
+import { Badge, Button, EmptyState, Field, Modal, Notice, Select } from '@/shared/ui';
 import { useAppStore } from '@/store/appStore';
 import { errorMessage } from '@/store/errors';
 import { useCurrentUser } from '@/store/hooks';
@@ -282,30 +282,21 @@ export function CourseEditorPage() {
             <CommitInput value={course.subtitle} onCommit={(subtitle) => update({ subtitle })} />
           </Field>
           <Field label="Предмет" hint="Направление, по которому курс ищут в каталоге">
-            <select
+            <Select
               value={course.category}
-              onChange={(event) => update({ category: event.target.value })}
-              className="inp"
-            >
-              {categories.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
+              onChange={(category) => update({ category })}
+              options={categories.map((name) => ({ value: name, label: name }))}
+            />
           </Field>
           <Field label="Экзамен">
-            <select
+            <Select<CourseExam>
               value={course.exam}
-              onChange={(event) => update({ exam: event.target.value as CourseExam })}
-              className="inp"
-            >
-              {COURSE_EXAM_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              onChange={(exam) => update({ exam })}
+              options={COURSE_EXAM_OPTIONS.map((option) => ({
+                value: option.id,
+                label: option.label,
+              }))}
+            />
           </Field>
           <Field label="Цена, ₽" hint="0 — курс бесплатный">
             <CommitInput
@@ -557,19 +548,11 @@ export function CourseEditorPage() {
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Тип">
-                <select
+                <Select<LessonType>
                   value={lessonDraft.type}
-                  onChange={(event) =>
-                    setLessonDraft({ ...lessonDraft, type: event.target.value as LessonType })
-                  }
-                  className="inp"
-                >
-                  {LESSON_TYPES.map((type) => (
-                    <option key={type.id} value={type.id}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(type) => setLessonDraft({ ...lessonDraft, type })}
+                  options={LESSON_TYPES.map((type) => ({ value: type.id, label: type.label }))}
+                />
               </Field>
               <Field label="Длительность, мин">
                 <input
@@ -617,8 +600,9 @@ export function CourseEditorPage() {
                 className="inp"
               />
             </Field>
-            <label className="flex items-center gap-2 text-[13.5px]">
+            <label className="flex cursor-pointer items-center gap-2.5 text-[13.5px]">
               <input
+                className="checkbox"
                 type="checkbox"
                 checked={lessonDraft.isPreview}
                 onChange={(event) =>

@@ -1,6 +1,7 @@
 import { GraduationCap } from 'lucide-react';
 import { forwardRef } from 'react';
 import { formatDate } from '@/shared/lib/format';
+import { CERTIFICATE_HEIGHT, CERTIFICATE_WIDTH } from './certificateSize';
 
 interface CertificateViewProps {
   number: string;
@@ -16,10 +17,10 @@ export const CertificateView = forwardRef<HTMLDivElement, CertificateViewProps>(
     return (
       <div
         ref={ref}
-        className="print-area mx-auto w-full max-w-[820px] bg-white p-6 text-[#171520] sm:p-10"
-        style={{ aspectRatio: '1.414 / 1', minHeight: 420 }}
+        className="print-area bg-white p-10 text-[#171520]"
+        style={{ width: CERTIFICATE_WIDTH, height: CERTIFICATE_HEIGHT }}
       >
-        <div className="flex h-full flex-col justify-between rounded-xl border-[3px] border-double border-[#3b2f7a] p-6 sm:p-10">
+        <div className="flex h-full flex-col justify-between rounded-xl border-[3px] border-double border-[#3b2f7a] p-10">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2.5">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2a2360] text-white">
@@ -40,11 +41,11 @@ export const CertificateView = forwardRef<HTMLDivElement, CertificateViewProps>(
             <p className="mt-3 text-[13px] text-[#5b5668]">
               Настоящий сертификат подтверждает, что
             </p>
-            <p className="font-display mt-2 text-[24px] leading-tight text-[#171520] sm:text-[34px]">
+            <p className="font-display mt-2 text-[34px] leading-tight text-[#171520]">
               {studentName}
             </p>
             <p className="mt-3 text-[13px] text-[#5b5668]">успешно завершил(а) курс</p>
-            <p className="mt-1.5 text-[16px] font-semibold leading-snug text-[#2a2360] sm:text-[20px]">
+            <p className="mt-1.5 text-[20px] font-semibold leading-snug text-[#2a2360]">
               {courseTitle}
             </p>
           </div>

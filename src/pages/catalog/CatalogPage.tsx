@@ -1,11 +1,13 @@
 import { ArrowRight, Search, SlidersHorizontal, Sparkles, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   activeFilterCount,
   DEFAULT_FILTERS,
   EXAM_FILTER_OPTIONS,
   filterCourses,
+  filtersFromParams,
+  filtersToParams,
   SORT_OPTIONS,
   type CatalogFilters,
   type CatalogSort,
@@ -14,7 +16,7 @@ import { useAuthDialog } from '@/features/auth/authDialogStore';
 import type { ExamType } from '@/entities/types';
 import { cn } from '@/shared/lib/cn';
 import { plural, WORDS } from '@/shared/lib/format';
-import { Button, Chip, EmptyState } from '@/shared/ui';
+import { Button, Chip, EmptyState, Reveal, Select } from '@/shared/ui';
 import { useAppStore } from '@/store/appStore';
 import { useCourseMetrics, useCourseStats, useCurrentUser } from '@/store/hooks';
 import { getSubjectNames } from '@/store/selectors';
@@ -29,7 +31,9 @@ export function CatalogPage() {
   const navigate = useNavigate();
   const metrics = useCourseMetrics();
   const stats = useCourseStats();
-  const [filters, setFilters] = useState<CatalogFilters>(DEFAULT_FILTERS);
+  const [params, setParams] = useSearchParams();
+  const filters = useMemo(() => filtersFromParams(params), [params]);
+  const setFilters = (next: CatalogFilters) => setParams(filtersToParams(next), { replace: true });
   const [showFilters, setShowFilters] = useState(false);
 
   const published = useMemo(
@@ -43,8 +47,7 @@ export function CatalogPage() {
   );
   const activeCount = activeFilterCount(filters);
 
-  const update = (changes: Partial<CatalogFilters>) =>
-    setFilters((current) => ({ ...current, ...changes }));
+  const update = (changes: Partial<CatalogFilters>) => setFilters({ ...filters, ...changes });
 
   const openStudio = () => {
     if (!user) {
@@ -132,30 +135,20 @@ export function CatalogPage() {
         id="catalog-filters"
         className={cn('mt-3 flex-wrap items-center gap-2 sm:flex', showFilters ? 'flex' : 'hidden')}
       >
-        <select
+        <Select
           value={filters.exam}
-          onChange={(event) => update({ exam: event.target.value as ExamType | 'all' })}
-          className="inp !w-auto !rounded-full !py-2 text-[13px]"
+          onChange={(exam) => update({ exam: exam as ExamType | 'all' })}
+          options={EXAM_FILTER_OPTIONS.map((option) => ({ value: option.id, label: option.label }))}
+          className="!w-auto min-w-[150px] !rounded-full !py-2 text-[13px]"
           aria-label="Экзамен"
-        >
-          {EXAM_FILTER_OPTIONS.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <select
+        />
+        <Select
           value={filters.sort}
-          onChange={(event) => update({ sort: event.target.value as CatalogSort })}
-          className="inp !w-auto !rounded-full !py-2 text-[13px]"
+          onChange={(sort) => update({ sort: sort as CatalogSort })}
+          options={SORT_OPTIONS.map((option) => ({ value: option.id, label: option.label }))}
+          className="!w-auto min-w-[150px] !rounded-full !py-2 text-[13px]"
           aria-label="Сортировка"
-        >
-          {SORT_OPTIONS.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        />
         {activeCount > 0 && (
           <button
             type="button"
@@ -185,19 +178,18 @@ export function CatalogPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {visible.map((course, index) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                metrics={metrics[course.id]}
-                stats={stats[course.id]}
-                index={index}
-              />
+              <Reveal key={course.id} delay={(index % 3) * 70} className="flex">
+                <CourseCard course={course} metrics={metrics[course.id]} stats={stats[course.id]} />
+              </Reveal>
             ))}
           </div>
         )}
       </section>
 
-      <section className="mt-10 overflow-hidden rounded-3xl border border-[rgb(var(--line)/0.1)]">
+      <Reveal
+        as="section"
+        className="mt-10 overflow-hidden rounded-3xl border border-[rgb(var(--line)/0.1)]"
+      >
         <div
           className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between md:p-8"
           style={{
@@ -220,7 +212,7 @@ export function CatalogPage() {
             Открыть студию <ArrowRight size={16} aria-hidden />
           </button>
         </div>
-      </section>
+      </Reveal>
 
       <p className="muted mt-8 text-[10.5px] leading-relaxed">Фото обложек: Unsplash</p>
     </div>

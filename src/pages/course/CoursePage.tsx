@@ -18,6 +18,7 @@ import { applyPromo } from '@/entities/enrollment/lib';
 import type { LessonType, PromoCode } from '@/entities/types';
 import { useRequireAuth } from '@/features/auth/useRequireAuth';
 import { CheckoutDialog } from '@/features/checkout/CheckoutDialog';
+import { useGoBack } from '@/shared/hooks/useGoBack';
 import { ReviewDialog } from '@/features/review/ReviewDialog';
 import {
   formatDate,
@@ -27,7 +28,7 @@ import {
   pluralize,
   WORDS,
 } from '@/shared/lib/format';
-import { Avatar, Badge, Button, EmptyState, Notice, Stars } from '@/shared/ui';
+import { Avatar, Badge, Button, EmptyState, Notice, Reveal, Stars } from '@/shared/ui';
 import { useAppStore } from '@/store/appStore';
 import { errorMessage } from '@/store/errors';
 import { useCurrentUser } from '@/store/hooks';
@@ -44,6 +45,7 @@ const LESSON_ICONS: Record<LessonType, typeof FileText> = {
 export function CoursePage() {
   const { id = '' } = useParams();
   const navigate = useNavigate();
+  const goBack = useGoBack('/');
   const requireAuth = useRequireAuth();
   const db = useAppStore((state) => state.db);
   const enroll = useAppStore((state) => state.enroll);
@@ -134,7 +136,7 @@ export function CoursePage() {
     <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-4 md:px-8 md:pb-12 md:pt-8">
       <button
         type="button"
-        onClick={() => navigate(-1)}
+        onClick={goBack}
         className="hover-dim muted mb-4 inline-flex items-center gap-2 rounded-full px-3 py-2 text-[13.5px]"
       >
         <ArrowLeft size={16} aria-hidden /> Назад
@@ -201,12 +203,12 @@ export function CoursePage() {
             </div>
           </div>
 
-          <section className="card mt-5 p-5 md:p-6">
+          <Reveal as="section" className="card mt-5 p-5 md:p-6">
             <h2 className="font-display text-lg">О курсе</h2>
             <p className="mt-2.5 whitespace-pre-line text-[14.5px] leading-relaxed">
               {course.description || 'Описание появится совсем скоро.'}
             </p>
-          </section>
+          </Reveal>
 
           <section className="mt-5">
             <div className="mb-3 flex items-end justify-between">
@@ -219,7 +221,7 @@ export function CoursePage() {
               {outline.modules.map((module, index) => {
                 const lessons = outline.lessonsByModule[module.id] ?? [];
                 return (
-                  <div key={module.id} className="card overflow-hidden">
+                  <Reveal key={module.id} className="card overflow-hidden">
                     <div className="hairline-b flex items-center gap-3 px-4 py-3.5">
                       <span className="soft-bg flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[12px] font-semibold">
                         {index + 1}
@@ -266,7 +268,7 @@ export function CoursePage() {
                         <li className="muted px-4 py-3 text-[13px]">Уроки ещё не добавлены</li>
                       )}
                     </ul>
-                  </div>
+                  </Reveal>
                 );
               })}
               {outline.modules.length === 0 && (
@@ -289,7 +291,7 @@ export function CoursePage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {reviews.map((review) => (
-                  <article key={review.id} className="card p-4">
+                  <Reveal as="article" key={review.id} className="card p-4">
                     <div className="flex items-center gap-2.5">
                       <Avatar name={review.userName} size={30} tone={1} />
                       <span className="text-[13.5px] font-medium">{review.userName}</span>
@@ -301,13 +303,16 @@ export function CoursePage() {
                       {review.text}
                     </p>
                     <p className="muted mt-2 text-[11.5px]">{formatDate(review.createdAt)}</p>
-                  </article>
+                  </Reveal>
                 ))}
               </div>
             )}
           </section>
 
-          <section className="card mt-5 flex flex-col gap-3 p-5 md:flex-row md:items-center">
+          <Reveal
+            as="section"
+            className="card mt-5 flex flex-col gap-3 p-5 md:flex-row md:items-center"
+          >
             <Avatar name={course.teacherName} size={54} tone={3} />
             <div className="min-w-0">
               <p className="font-display text-[15px]">{course.teacherName}</p>
@@ -318,7 +323,7 @@ export function CoursePage() {
                 <p className="mt-2 text-[13.5px] leading-relaxed">{course.teacherBio}</p>
               )}
             </div>
-          </section>
+          </Reveal>
         </div>
 
         <aside className="lg:sticky lg:top-6 lg:self-start">

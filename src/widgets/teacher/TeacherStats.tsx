@@ -2,7 +2,7 @@ import { ChartColumn, Coins, Receipt, ShoppingBag, Star, Users, Wallet } from 'l
 import { useMemo } from 'react';
 import type { User } from '@/entities/types';
 import { formatMoney, formatShortDate, plural, WORDS } from '@/shared/lib/format';
-import { EmptyState, StatCard } from '@/shared/ui';
+import { EmptyState, Reveal, StatCard } from '@/shared/ui';
 import { BarList, ColumnChart } from '@/shared/ui/charts';
 import { useAppStore } from '@/store/appStore';
 import { getTeacherStats, PLATFORM_FEE } from '@/store/selectors';
@@ -63,7 +63,7 @@ export function TeacherStats({ user, now }: { user: User; now?: Date }) {
         </div>
       ) : (
         <>
-          <div className="card mt-4 p-4 md:p-5">
+          <Reveal className="card mt-4 p-4 md:p-5">
             <div className="mb-3 flex items-center justify-between gap-2">
               <h3 className="font-display text-[14.5px]">Доход по месяцам</h3>
               <span className="muted text-[12px]">
@@ -75,17 +75,17 @@ export function TeacherStats({ user, now }: { user: User; now?: Date }) {
               data={stats.byMonth.map((item) => ({ label: item.label, value: item.revenue }))}
               format={formatMoney}
             />
-          </div>
+          </Reveal>
 
           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="card p-4 md:p-5">
+            <Reveal className="card p-4 md:p-5">
               <h3 className="font-display mb-3 text-[14.5px]">Доход по курсам</h3>
               <BarList
                 title="Доход по курсам"
                 data={stats.byCourse.map((item) => ({ label: item.title, value: item.revenue }))}
                 format={formatMoney}
               />
-            </div>
+            </Reveal>
 
             <div className="card overflow-hidden">
               <h3 className="font-display px-4 pt-4 text-[14.5px] md:px-5">Последние продажи</h3>

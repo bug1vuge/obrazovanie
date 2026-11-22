@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getTone } from '@/entities/course/lib';
 import type { User } from '@/entities/types';
 import { formatDuration } from '@/shared/lib/format';
-import { Button, Chip, EmptyState, ProgressBar, StatCard } from '@/shared/ui';
+import { Button, Chip, EmptyState, ProgressBar, Reveal, StatCard } from '@/shared/ui';
 import { useAppStore } from '@/store/appStore';
 import { useCourseMetrics } from '@/store/hooks';
 import { getUserLearning } from '@/store/selectors';
@@ -74,7 +74,7 @@ export function MyLearning({ user }: { user: User }) {
               const tone = getTone(item.course?.tone);
               const courseId = item.enrollment.courseId;
               return (
-                <div key={item.enrollment.id} className="card overflow-hidden">
+                <Reveal key={item.enrollment.id} className="card overflow-hidden">
                   <div className="flex items-stretch">
                     <div
                       className="w-2 shrink-0"
@@ -125,7 +125,7 @@ export function MyLearning({ user }: { user: User }) {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Reveal>
               );
             })}
           </div>

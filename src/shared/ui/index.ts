@@ -13,3 +13,7 @@ export { Spinner } from './Spinner';
 export { Stars } from './Stars';
 export { StatCard } from './StatCard';
 export { Tabs, type TabItem } from './Tabs';
+export { Reveal } from './Reveal';
+export { Select, type SelectOption } from './Select';
+export { Drawer } from './Drawer';
+export { ScaleToFit } from './ScaleToFit';

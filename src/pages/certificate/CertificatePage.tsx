@@ -1,11 +1,13 @@
 import { ArrowLeft, Download, Printer } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useGoBack } from '@/shared/hooks/useGoBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { certificateNumber } from '@/entities/certificate/lib';
+import { CERTIFICATE_HEIGHT, CERTIFICATE_WIDTH } from '@/features/certificate/certificateSize';
 import { CertificateView } from '@/features/certificate/CertificateView';
 import { downloadElementAsPdf } from '@/features/certificate/exportPdf';
 import { useAuthDialog } from '@/features/auth/authDialogStore';
-import { Button, EmptyState, Notice } from '@/shared/ui';
+import { Button, EmptyState, Notice, ScaleToFit } from '@/shared/ui';
 import { useAppStore } from '@/store/appStore';
 import { useCurrentUser } from '@/store/hooks';
 import { getCourseOutline, getLessonProgressIndex } from '@/store/selectors';
@@ -13,6 +15,7 @@ import { getCourseOutline, getLessonProgressIndex } from '@/store/selectors';
 export function CertificatePage() {
   const { courseId = '' } = useParams();
   const navigate = useNavigate();
+  const goBack = useGoBack('/profile');
   const db = useAppStore((state) => state.db);
   const issueCertificate = useAppStore((state) => state.issueCertificate);
   const openAuth = useAuthDialog((state) => state.open);
@@ -68,7 +71,7 @@ export function CertificatePage() {
     <div className="mx-auto w-full max-w-5xl px-4 pb-24 pt-4 md:px-8 md:py-10">
       <button
         type="button"
-        onClick={() => navigate(-1)}
+        onClick={goBack}
         className="hover-dim muted mb-4 inline-flex items-center gap-2 rounded-full px-3 py-2 text-[13.5px]"
       >
         <ArrowLeft size={16} aria-hidden /> Назад
@@ -96,15 +99,17 @@ export function CertificatePage() {
               {error}
             </Notice>
           )}
-          <div className="bd overflow-x-auto rounded-3xl p-2 sm:p-4">
-            <CertificateView
-              ref={ref}
-              number={number}
-              studentName={user.displayName}
-              courseTitle={course.title}
-              teacherName={course.teacherName}
-              issuedAt={certificate?.issuedAt ?? new Date().toISOString()}
-            />
+          <div className="bd overflow-hidden rounded-3xl p-2 sm:p-4">
+            <ScaleToFit width={CERTIFICATE_WIDTH} height={CERTIFICATE_HEIGHT}>
+              <CertificateView
+                ref={ref}
+                number={number}
+                studentName={user.displayName}
+                courseTitle={course.title}
+                teacherName={course.teacherName}
+                issuedAt={certificate?.issuedAt ?? new Date().toISOString()}
+              />
+            </ScaleToFit>
           </div>
         </>
       ) : (

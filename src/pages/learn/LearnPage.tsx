@@ -21,7 +21,7 @@ import { QuizRunner } from '@/features/quiz/QuizRunner';
 import { isEmbeddableVideo, toEmbedUrl } from '@/shared/lib/video';
 import { cn } from '@/shared/lib/cn';
 import { formatDuration } from '@/shared/lib/format';
-import { Badge, Button, EmptyState, ProgressBar } from '@/shared/ui';
+import { Badge, Button, Drawer, EmptyState, ProgressBar } from '@/shared/ui';
 import { useAppStore } from '@/store/appStore';
 import { useCurrentUser } from '@/store/hooks';
 import {
@@ -220,8 +220,8 @@ export function LearnPage() {
   );
 
   return (
-    <div className="flex h-full flex-col">
-      <header className="hairline-b surface z-20 flex shrink-0 items-center gap-2 px-3 pb-2.5 pt-[calc(env(safe-area-inset-top,0px)+0.6rem)] md:px-5">
+    <div className="min-h-dvh">
+      <header className="app-header hairline-b sticky top-0 z-30 flex items-center gap-2 px-3 pb-2.5 pt-[calc(env(safe-area-inset-top,0px)+0.6rem)] md:px-5 lg:h-14 lg:py-0">
         <button
           type="button"
           onClick={() => navigate(`/course/${courseId}`)}
@@ -249,8 +249,8 @@ export function LearnPage() {
         </button>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <aside className="hairline-r hidden w-80 shrink-0 overflow-y-auto lg:block">
+      <div className="flex">
+        <aside className="hairline-r sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-80 shrink-0 overflow-y-auto overscroll-contain lg:block">
           <div className="p-4 pb-1">
             <ProgressBar value={percent} thin />
             {finished && (
@@ -265,7 +265,7 @@ export function LearnPage() {
           {contents}
         </aside>
 
-        <main className="min-h-0 flex-1 overflow-y-auto">
+        <main className="min-w-0 flex-1">
           <div className="mx-auto w-full max-w-3xl px-4 py-5 pb-24 md:px-8">
             {!canOpenLesson ? (
               <div className="card p-6">
@@ -371,38 +371,17 @@ export function LearnPage() {
         </main>
       </div>
 
-      {drawerOpen && (
-        <div
-          className="fixed inset-0 z-30 flex bg-black/50 lg:hidden"
-          onClick={() => setDrawerOpen(false)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Содержание"
-            className="surface ml-auto flex h-full w-[86%] max-w-sm flex-col"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="hairline-b flex items-center justify-between px-4 py-3">
-              <span className="font-display text-[14px]">Содержание</span>
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(false)}
-                className="hover-dim rounded-full p-2"
-                aria-label="Закрыть"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto pb-6">
-              <div className="px-4 pt-3">
-                <ProgressBar value={percent} thin />
-              </div>
-              {contents}
-            </div>
-          </div>
+      <Drawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title="Содержание"
+        className="lg:hidden"
+      >
+        <div className="px-4 pt-3">
+          <ProgressBar value={percent} thin />
         </div>
-      )}
+        {contents}
+      </Drawer>
     </div>
   );
 }

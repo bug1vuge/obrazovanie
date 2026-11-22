@@ -11,17 +11,15 @@ interface CourseCardProps {
   course: Course;
   metrics?: CourseMetrics;
   stats?: CourseStats;
-  index?: number;
 }
 
-export function CourseCard({ course, metrics, stats, index = 0 }: CourseCardProps) {
+export function CourseCard({ course, metrics, stats }: CourseCardProps) {
   const tone = getTone(course.tone);
   const hours = Math.max(1, Math.round((metrics?.totalMinutes ?? 0) / 60));
   return (
     <Link
       to={`/course/${course.id}`}
-      className="card card-lift rise group flex flex-col overflow-hidden"
-      style={{ animationDelay: `${Math.min(index, 8) * 55}ms` }}
+      className="card card-lift group flex w-full flex-col overflow-hidden"
     >
       <div className="relative flex aspect-[16/10] flex-col justify-between overflow-hidden p-4">
         <CourseCover
