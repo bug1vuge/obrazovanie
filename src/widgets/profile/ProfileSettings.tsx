@@ -76,7 +76,7 @@ export function ProfileSettings({ user }: { user: User }) {
               <Save size={16} aria-hidden /> Сохранить
             </Button>
             {saved && (
-              <span role="status" className="text-[12.5px] text-emerald-600 dark:text-emerald-400">
+              <span role="status" className="text-[12.5px] text-emerald-700 dark:text-emerald-400">
                 Сохранено
               </span>
             )}

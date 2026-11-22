@@ -213,7 +213,7 @@ export function AdminPage() {
                       onClick={() => setToDelete(course)}
                       aria-label={`Удалить «${course.title}»`}
                     >
-                      <Trash2 size={15} className="text-red-500" />
+                      <Trash2 size={15} className="text-red-600" />
                     </Button>
                   </div>
                 </div>
@@ -240,7 +240,7 @@ export function AdminPage() {
                   onClick={() =>
                     run(() => deleteCategory(category.id), `Предмет «${category.name}» удалён`)
                   }
-                  className="ml-1 text-red-500"
+                  className="ml-1 text-red-600"
                   aria-label={`Удалить предмет «${category.name}»`}
                 >
                   <X size={12} />

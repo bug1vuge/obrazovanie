@@ -67,7 +67,7 @@ export function CheckoutDialog({ course, promo, open, onClose, onPaid }: Checkou
             <dd>{formatPrice(course.price)}</dd>
           </div>
           {promo && (
-            <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
+            <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
               <dt className="inline-flex items-center gap-1">
                 <Tag size={13} aria-hidden /> Промокод {promo.code}
               </dt>
