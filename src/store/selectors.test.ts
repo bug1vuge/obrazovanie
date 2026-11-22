@@ -55,6 +55,7 @@ describe('selectors', () => {
     expect(monthly).toBeLessThanOrEqual(stats.revenue);
     expect(stats.byCourse.reduce((sum, item) => sum + item.revenue, 0)).toBe(stats.revenue);
     expect(stats.recent.length).toBeLessThanOrEqual(8);
+    expect(stats.revenuePrevMonthToDate).toBeLessThanOrEqual(stats.byMonth.at(-2)!.revenue);
     expect(PLATFORM_FEE).toBeGreaterThan(0);
   });
 

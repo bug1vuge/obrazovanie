@@ -1,5 +1,3 @@
-import { useId } from 'react';
-
 /**
  * Lightweight dependency-free SVG charts that follow the theme colours.
  * Each chart exposes an accessible summary via <title>/<desc> and a hidden table.
@@ -44,89 +42,58 @@ export function ColumnChart({
   data,
   title,
   format = compact,
-  height = 220,
+  height = 200,
 }: {
   data: ChartDatum[];
   title: string;
   format?: (value: number) => string;
   height?: number;
 }) {
-  const gradientId = useId();
-  const width = 640;
-  const padding = { top: 16, right: 8, bottom: 28, left: 52 };
-  const innerW = width - padding.left - padding.right;
-  const innerH = height - padding.top - padding.bottom;
   const max = niceMax(Math.max(0, ...data.map((item) => item.value)));
-  const slot = innerW / Math.max(1, data.length);
-  const barW = Math.min(56, slot * 0.56);
-  const ticks = [0, 0.25, 0.5, 0.75, 1];
+  const ticks = [1, 0.75, 0.5, 0.25, 0];
 
+  // HTML/CSS instead of a scaled SVG keeps labels readable on narrow screens.
   return (
     <figure className="w-full">
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="block h-auto w-full"
-        role="img"
-        aria-label={title}
-      >
-        <defs>
-          <linearGradient id={gradientId} x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0" stopColor="rgb(var(--color-primary))" />
-            <stop offset="1" stopColor="rgb(var(--color-secondary))" />
-          </linearGradient>
-        </defs>
-        {ticks.map((tick) => {
-          const y = padding.top + innerH * (1 - tick);
-          return (
-            <g key={tick}>
-              <line
-                x1={padding.left}
-                x2={width - padding.right}
-                y1={y}
-                y2={y}
-                stroke="rgb(var(--line) / 0.1)"
+      <div className="flex gap-2" style={{ height }} role="img" aria-label={title}>
+        <div className="muted flex shrink-0 flex-col justify-between pb-6 text-right text-[10.5px] leading-none">
+          {ticks.map((tick) => (
+            <span key={tick}>{compact(max * tick)}</span>
+          ))}
+        </div>
+        <div className="relative flex min-w-0 flex-1 flex-col">
+          <div className="relative flex-1">
+            {ticks.map((tick) => (
+              <div
+                key={tick}
+                className="absolute inset-x-0 border-t border-[rgb(var(--line)/0.08)]"
+                style={{ top: `${(1 - tick) * 100}%` }}
               />
-              <text
-                x={padding.left - 8}
-                y={y + 4}
-                textAnchor="end"
-                fontSize="11"
-                fill="rgb(var(--muted))"
-              >
-                {compact(max * tick)}
-              </text>
-            </g>
-          );
-        })}
-        {data.map((item, index) => {
-          const h = (item.value / max) * innerH;
-          const x = padding.left + slot * index + (slot - barW) / 2;
-          const y = padding.top + innerH - h;
-          return (
-            <g key={item.label}>
-              <rect
-                x={x}
-                y={y}
-                width={barW}
-                height={Math.max(0, h)}
-                rx={6}
-                fill={`url(#${gradientId})`}
-              >
-                <title>{`${item.label}: ${format(item.value)}`}</title>
-              </rect>
-              <text
-                x={x + barW / 2}
-                y={height - 8}
-                textAnchor="middle"
-                fontSize="12"
-                fill="rgb(var(--muted))"
-              >
+            ))}
+            <div className="absolute inset-0 flex items-end justify-around gap-1.5 px-1">
+              {data.map((item) => (
+                <div
+                  key={item.label}
+                  title={`${item.label}: ${format(item.value)}`}
+                  className="w-full max-w-[44px] rounded-t-md transition-[height] duration-500"
+                  style={{
+                    height: `${(item.value / max) * 100}%`,
+                    background:
+                      'linear-gradient(0deg, rgb(var(--color-primary)), rgb(var(--color-secondary)))',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="muted flex h-6 items-end justify-around gap-1.5 px-1 text-[11.5px]">
+            {data.map((item) => (
+              <span key={item.label} className="w-full max-w-[44px] text-center">
                 {item.label}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
       <DataTable data={data} format={format} />
     </figure>
   );

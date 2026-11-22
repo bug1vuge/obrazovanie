@@ -13,7 +13,7 @@ function Trend({ current, previous }: { current: number; previous: number }) {
   const positive = delta >= 0;
   return (
     <span className={positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}>
-      {positive ? '▲' : '▼'} {Math.abs(delta)}% к прошлому месяцу
+      {positive ? '▲' : '▼'} {Math.abs(delta)}% к тому же периоду прошлого месяца
     </span>
   );
 }
@@ -36,7 +36,7 @@ export function TeacherStats({ user, now }: { user: User; now?: Date }) {
           icon={Coins}
           label="Доход с продаж"
           value={formatMoney(stats.revenue)}
-          hint={<Trend current={stats.revenueThisMonth} previous={stats.revenuePrevMonth} />}
+          hint={<Trend current={stats.revenueThisMonth} previous={stats.revenuePrevMonthToDate} />}
         />
         <StatCard
           icon={Wallet}

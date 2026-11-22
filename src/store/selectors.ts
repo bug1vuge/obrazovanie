@@ -175,7 +175,8 @@ export interface TeacherStats {
   rating: number;
   reviews: number;
   revenueThisMonth: number;
-  revenuePrevMonth: number;
+  /** Revenue of the previous month up to the same day — a fair comparison. */
+  revenuePrevMonthToDate: number;
   byMonth: MonthlyRevenue[];
   byCourse: CourseRevenue[];
   recent: Enrollment[];
@@ -251,6 +252,19 @@ export function getTeacherStats(
     courseIndex.set(item.courseId, entry);
   }
 
+  const dayOfMonth = now.getDate();
+  const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const revenuePrevMonthToDate = paid
+    .filter((item) => {
+      const date = new Date(item.createdAt);
+      return (
+        date.getFullYear() === prevMonth.getFullYear() &&
+        date.getMonth() === prevMonth.getMonth() &&
+        date.getDate() <= dayOfMonth
+      );
+    })
+    .reduce((sum, item) => sum + item.amount, 0);
+
   const reviews = values(db.reviews).filter(
     (review) => review.teacherId === teacherId || ownCourseIds.has(review.courseId),
   );
@@ -265,7 +279,7 @@ export function getTeacherStats(
       : 0,
     reviews: reviews.length,
     revenueThisMonth: byMonth.at(-1)?.revenue ?? 0,
-    revenuePrevMonth: byMonth.at(-2)?.revenue ?? 0,
+    revenuePrevMonthToDate,
     byMonth,
     byCourse: [...courseIndex.values()].sort((a, b) => b.revenue - a.revenue),
     recent: paid.slice(0, 8),
