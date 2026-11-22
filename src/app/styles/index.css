@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Design tokens (RGB triplets so Tailwind can apply alpha) ---------- */
+@layer base {
+  :root {
+    --color-bg: 249 247 242;
+    --color-primary: 34 30 74;
+    --color-secondary: 240 101 58;
+    --surface: 255 255 255;
+    --surface-2: 242 238 230;
+    --ink: 26 22 20;
+    --muted: 116 109 102;
+    --line: 26 22 20;
+    --on-primary: 255 255 255;
+    color-scheme: light;
+  }
+
+  html.dark {
+    --color-bg: 13 12 17;
+    --color-primary: 132 124 255;
+    --color-secondary: 255 138 92;
+    --surface: 23 22 29;
+    --surface-2: 35 33 43;
+    --ink: 241 239 246;
+    --muted: 162 158 172;
+    --line: 255 255 255;
+    --on-primary: 14 12 20;
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background-color: rgb(var(--color-bg));
+    background-image:
+      radial-gradient(110% 70% at 100% 0%, rgb(var(--color-secondary) / 0.07), transparent 62%),
+      radial-gradient(90% 60% at 0% 0%, rgb(var(--color-primary) / 0.06), transparent 55%);
+    background-attachment: fixed;
+    color: rgb(var(--ink));
+    font-family:
+      Onest,
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--muted) / 0.4) transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--color-secondary));
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- Component primitives ported from the original design ---------- */
+@layer components {
+  .font-display {
+    font-family: Unbounded, Onest, ui-sans-serif, sans-serif;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+  }
+
+  .surface {
+    background-color: rgb(var(--surface));
+  }
+  .soft-bg {
+    background-color: rgb(var(--surface-2));
+  }
+  .muted {
+    color: rgb(var(--muted));
+  }
+  .ink {
+    color: rgb(var(--ink));
+  }
+  .on-primary {
+    color: rgb(var(--on-primary));
+  }
+
+  .card {
+    background-color: rgb(var(--surface));
+    border: 1px solid rgb(var(--line) / 0.1);
+    border-radius: 22px;
+  }
+  .card-lift {
+    transition:
+      transform 0.22s,
+      box-shadow 0.22s,
+      border-color 0.22s;
+  }
+  .card-lift:hover {
+    transform: translateY(-3px);
+    border-color: rgb(var(--line) / 0.22);
+    box-shadow: 0 22px 40px -28px rgb(var(--line) / 0.6);
+  }
+
+  .bd {
+    border: 1px solid rgb(var(--line) / 0.16);
+  }
+  .hairline-b {
+    border-bottom: 1px solid rgb(var(--line) / 0.1);
+  }
+  .hairline-t {
+    border-top: 1px solid rgb(var(--line) / 0.1);
+  }
+  .hairline-r {
+    border-right: 1px solid rgb(var(--line) / 0.1);
+  }
+  .hover-dim:hover {
+    background-color: rgb(var(--line) / 0.06);
+  }
+  .hover-line:hover {
+    border-color: rgb(var(--line) / 0.3);
+  }
+
+  .inp {
+    width: 100%;
+    background-color: rgb(var(--surface));
+    border: 1px solid rgb(var(--line) / 0.16);
+    border-radius: 14px;
+    padding: 0.68rem 0.9rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: rgb(var(--ink));
+    outline: none;
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+  .inp:focus {
+    border-color: rgb(var(--color-primary) / 0.55);
+    box-shadow: 0 0 0 3px rgb(var(--color-primary) / 0.14);
+  }
+  .inp::placeholder {
+    color: rgb(var(--muted));
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    border: 1px solid rgb(var(--line) / 0.16);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .chip-on {
+    background-color: rgb(var(--color-primary));
+    border-color: rgb(var(--color-primary));
+    color: rgb(var(--on-primary));
+  }
+
+  .rise {
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .card-lift,
+  .card-lift:hover {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Printing the certificate: show only the printable area. */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  body {
+    overflow: visible;
+    background: #fff;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: fixed;
+    inset: 0;
+    margin: 0 auto;
+  }
+}
