@@ -8,6 +8,8 @@ import {
   DEFAULT_FILTERS,
   EXAM_FILTER_OPTIONS,
   filterCourses,
+  filtersFromParams,
+  filtersToParams,
   SORT_OPTIONS,
 } from './filterCourses';
 
@@ -60,5 +62,14 @@ describe('filterCourses', () => {
   it('counts active filters', () => {
     expect(activeFilterCount(DEFAULT_FILTERS)).toBe(0);
     expect(activeFilterCount({ ...DEFAULT_FILTERS, exam: 'ege', subject: 'Химия' })).toBe(2);
+  });
+});
+
+describe('filters in the URL', () => {
+  it('round-trips through search params and ignores invalid values', () => {
+    const filters = { query: 'физика', subject: 'Физика', exam: 'ege', sort: 'rating' } as const;
+    expect(filtersFromParams(filtersToParams(filters))).toEqual(filters);
+    expect(filtersToParams(DEFAULT_FILTERS).toString()).toBe('');
+    expect(filtersFromParams(new URLSearchParams('exam=gia&sort=price'))).toEqual(DEFAULT_FILTERS);
   });
 });

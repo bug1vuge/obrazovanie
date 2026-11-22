@@ -22,22 +22,42 @@ describe('catalog', () => {
     expect(new Set(images).size).toBe(36);
   });
 
-  it('has no price filter and no «Популярные» sort; the exam filter only offers ОГЭ and ЕГЭ', () => {
-    renderApp('/');
+  it('has no price filter and no «Популярные» sort; the exam filter only offers ОГЭ and ЕГЭ', async () => {
+    const { user } = renderApp('/');
     expect(screen.queryByRole('combobox', { name: 'Цена' })).not.toBeInTheDocument();
-    const sort = screen.getByRole('combobox', { name: 'Сортировка' });
-    expect(within(sort).queryByText('Популярные')).not.toBeInTheDocument();
-    const exam = screen.getByRole('combobox', { name: 'Экзамен' });
-    expect(
-      within(exam)
-        .getAllByRole('option')
-        .map((option) => option.textContent),
-    ).toEqual(['ОГЭ и ЕГЭ', 'ОГЭ', 'ЕГЭ']);
+
+    await user.click(screen.getByRole('combobox', { name: 'Сортировка' }));
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual([
+      'Новые',
+      'По рейтингу',
+    ]);
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('combobox', { name: 'Экзамен' }));
+    expect(screen.getAllByRole('option').map((option) => option.textContent)).toEqual([
+      'ОГЭ и ЕГЭ',
+      'ОГЭ',
+      'ЕГЭ',
+    ]);
+  });
+
+  it('keeps filters in the URL so they survive going to a course and back', async () => {
+    const { user, router } = renderApp('/');
+    await user.click(screen.getByRole('combobox', { name: 'Экзамен' }));
+    await user.click(screen.getByRole('option', { name: 'ОГЭ' }));
+    expect(router.state.location.search).toBe('?exam=oge');
+    await user.click(screen.getByRole('link', { name: /География: ОГЭ с экспертом/ }));
+    expect(router.state.location.pathname).toBe('/course/sp-geo-oge-expert');
+    await act(() => router.navigate(-1));
+    expect(screen.getByRole('combobox', { name: 'Экзамен' })).toHaveTextContent('ОГЭ');
+    expect(screen.queryByText('География: ЕГЭ с экспертом')).not.toBeInTheDocument();
   });
 
   it('filters by exam, subject and search', async () => {
     const { user } = renderApp('/');
-    await user.selectOptions(screen.getByRole('combobox', { name: 'Экзамен' }), 'ege');
+    await user.click(screen.getByRole('combobox', { name: 'Экзамен' }));
+    await user.click(screen.getByRole('option', { name: 'ЕГЭ' }));
     const egeCount = courseLinks().length;
     expect(egeCount).toBeLessThan(36);
     expect(screen.queryByText('География: ОГЭ с экспертом')).not.toBeInTheDocument();
@@ -247,7 +267,35 @@ describe('admin', () => {
   });
 });
 
+describe('page scroll lock', () => {
+  it('locks page scrolling while a dialog is open and releases it afterwards', async () => {
+    const { user } = renderApp('/');
+    const html = document.documentElement;
+    expect(html).not.toHaveClass('scroll-locked');
+    await user.click(screen.getAllByRole('button', { name: 'Войти' })[0]!);
+    expect(html).toHaveClass('scroll-locked');
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(html).not.toHaveClass('scroll-locked');
+  });
+
+  it('locks scrolling for the lesson contents drawer', async () => {
+    const { user } = renderApp('/learn/k-math/k-math-l1', { userId: DEMO_STUDENT_ID });
+    await user.click(screen.getByRole('button', { name: 'Содержание' }));
+    const drawer = screen.getByRole('dialog', { name: 'Содержание' });
+    expect(document.documentElement).toHaveClass('scroll-locked');
+    await user.click(within(drawer).getByRole('button', { name: 'Закрыть' }));
+    expect(document.documentElement).not.toHaveClass('scroll-locked');
+  });
+});
+
 describe('routing', () => {
+  it('«Назад» on a directly opened course goes to the catalog instead of leaving the app', async () => {
+    const { user, router } = renderApp('/course/k-math');
+    await user.click(screen.getByRole('button', { name: 'Назад' }));
+    expect(router.state.location.pathname).toBe('/');
+  });
+
   it('redirects old sections into the cabinet and shows 404 for unknown pages', () => {
     renderApp('/studio', { userId: DEMO_TEACHER_ID });
     expect(screen.getByRole('tab', { name: 'Курсы' })).toHaveAttribute('aria-selected', 'true');

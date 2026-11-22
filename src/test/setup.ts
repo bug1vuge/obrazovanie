@@ -6,3 +6,7 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
 });
+
+// jsdom does not implement scrolling APIs used by ScrollRestoration and Select.
+window.scrollTo = (() => undefined) as typeof window.scrollTo;
+Element.prototype.scrollIntoView = () => undefined;
